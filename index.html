@@ -167,7 +167,6 @@
             color: #706030;
         }
 
-        /* Специальный стиль для поля скидки (бонус/экономия) */
         .resource-field.discount-field input {
             border-color: rgba(100, 255, 100, 0.3);
             color: #a0f0a0;
@@ -304,7 +303,6 @@
             z-index: -1;
         }
 
-        /* --- Стили для ссылки "Нашел баг?" и попапа --- */
         .bug-link-container {
             text-align: center;
             margin-top: 25px;
@@ -437,7 +435,6 @@
 
     <div class="calculator">
         <div class="calc-grid">
-            <!-- Панель "От" -->
             <div class="panel from-panel">
                 <div class="panel-title"> Сейчас</div>
                 <div class="field-group">
@@ -459,24 +456,22 @@
                 </div>
             </div>
 
-            <!-- Ресурсы -->
             <div class="resources-panel">
                 <div class="resource-field">
-                    <label>💎 Карты (Cards)</label>
+                    <label>🟨 Карты (Cards)</label>
                     <input type="number" id="cards" placeholder="0" min="0">
                 </div>
                 <div class="resource-field">
-                    <label>🪙 Монеты (Credits)</label>
+                    <label>💿 Монеты (Credits)</label>
                     <input type="number" id="credits" placeholder="0" min="0">
                 </div>
                 <div class="resource-field discount-field">
-                    <label>🛡️ Скидка клана (%)</label>
+                    <label>✊ Скидка клана (%)</label>
                     <input type="number" id="clanDiscount" placeholder="0" min="0" max="100" value="0">
                 </div>
                 <button class="btn-calculate" onclick="calculate()">Рассчитать</button>
             </div>
 
-            <!-- Панель "До" -->
             <div class="panel to-panel">
                 <div class="panel-title">🎯 Цель</div>
                 <div class="field-group">
@@ -503,12 +498,11 @@
         </div>
 
         <div class="result-panel" id="resultPanel">
-            <div class="result-text" id="resultText">Заполните любые из параметров и нажмите "Рассчитать", чтобы узнать остальные</div>
+            <div class="result-text" id="resultText">Заполни любые из параметров и нажми «Рассчитать», чтобы узнать остальные</div>
             <button class="btn-clear" id="btnClear" onclick="clearForm()" style="display: none;">🔄 Очистить форму</button>
         </div>
     </div>
 
-    <!-- Ссылка на баг-репорт -->
     <div class="bug-link-container">
         <a class="bug-link" onclick="openBugModal()">Нашел баг?</a>
     </div>
@@ -525,15 +519,17 @@
     <div id="bugModal" class="bug-modal-overlay" onclick="closeBugModal(event)">
         <div class="bug-modal" onclick="event.stopPropagation()">
             <button class="bug-modal-close" onclick="closeBugModal()">&times;</button>
-            <h3>🐛 Нашел баг?</h3>
-            <p>Это опенсорс, малыш, - баги исправляй сам )</p>
+            <h3>🐛 Нашел баг? — Исправь!</h3>
+            <p>Это же опенсорс</p>
             <div class="bug-instructions">
                 <p><strong>Инструкция:</strong></p>
                 <ol>
                     <li>Зайди на <a href="https://chat.qwen.ai/" target="_blank" class="modal-link">https://chat.qwen.ai/</a> и авторизуйся</li>
-                    <li>Загрузи в чат файл калькулятора и опиши проблему, дальше он сам разберется</li>
-                    <li>Скачай исправленную версию</li>
+                    <li>Загрузи в чат файл калькулятора (index.html) и опиши проблему, дальше он сам разберется</li>
+                    <li>Скачай исправленную версию и используй офлайн</li>
                 </ol>
+                <p style="margin-top: 15px;">или</p>
+                <p>Предложи коммит <a href="https://github.com/DblPOKOJl/lust-goddess-calculator/" target="_blank" class="modal-link">в репу калькулятора</a></p>
             </div>
         </div>
     </div>
@@ -585,7 +581,6 @@
 
         function getTransitionCost(r, level) { return costData[r][level]; }
 
-        // Применение скидки только к монетам, округление до целого
         function applyDiscount(baseCredits, discount) {
             if (!discount || discount <= 0) return baseCredits;
             return Math.round(baseCredits * (1 - (discount / 100)));
@@ -657,7 +652,6 @@
             const credits = creditsInput !== '' ? parseInt(creditsInput) : null;
             let discount = discountInput !== '' ? parseFloat(discountInput) : 0;
             
-            // Ограничиваем скидку разумными пределами
             if (discount < 0) discount = 0;
             if (discount > 100) discount = 100;
 
@@ -706,18 +700,18 @@
             if (hasTo && !hasCards && !hasCredits) {
                 const cost = calculateCost(fromLevel, fromR, toLevel, toR, discount);
                 const discountText = discount > 0 ? ` <span style="font-size:0.85em; color:#80d080;">(со скидкой ${discount}%)</span>` : '';
-                showSuccess(`Для прокачки с ${fromLevel} R${fromR} до ${toLevel} R${toR} нужно:<br>💎 Карт: <span class="result-value">${cost.cards.toLocaleString()}</span><br>🪙 Монет: <span class="result-value">${cost.credits.toLocaleString()}</span>${discountText}`);
+                showSuccess(`Для прокачки с ${fromLevel} R${fromR} до ${toLevel} R${toR} нужно:<br>🟨 Карт: <span class="result-value">${cost.cards.toLocaleString()}</span><br>💿 Монет: <span class="result-value">${cost.credits.toLocaleString()}</span>${discountText}`);
                 btnClear.style.display = 'block';
             } else if (hasTo && hasCards && hasCredits) {
                 const cost = calculateCost(fromLevel, fromR, toLevel, toR, discount);
                 if (cards >= cost.cards && credits >= cost.credits) {
-                    showSuccess(`Ресурсов достаточно!<br>Потратится: 💎 ${cost.cards.toLocaleString()} карт, 🪙 ${cost.credits.toLocaleString()} монет<br>Останется: 💎 ${(cards - cost.cards).toLocaleString()} карт, 🪙 ${(credits - cost.credits).toLocaleString()} монет`);
+                    showSuccess(`Ресурсов достаточно!<br>Потратится: 🟨 ${cost.cards.toLocaleString()} карт, 💿 ${cost.credits.toLocaleString()} монет<br>Останется: 🟨 ${(cards - cost.cards).toLocaleString()} карт, 💿 ${(credits - cost.credits).toLocaleString()} монет`);
                 } else {
                     const maxPos = findMaxLevel(fromLevel, fromR, cards, credits, discount);
                     if (maxPos.level === fromLevel && maxPos.r === fromR) {
                         showError(errorMessages.notEnoughResources);
                     } else {
-                        showSuccess(`Ресурсов не хватает до ${toLevel} R${toR}.<br>Максимум: <span class="result-value">${maxPos.level} R${maxPos.r}</span><br>Потратится: 💎 ${maxPos.usedCards.toLocaleString()} карт, 🪙 ${maxPos.usedCredits.toLocaleString()} монет`);
+                        showSuccess(`Ресурсов не хватает до ${toLevel} R${toR}.<br>Максимум: <span class="result-value">${maxPos.level} R${maxPos.r}</span><br>Потратится: 🟨 ${maxPos.usedCards.toLocaleString()} карт, 💿 ${maxPos.usedCredits.toLocaleString()} монет`);
                     }
                 }
                 btnClear.style.display = 'block';
@@ -726,7 +720,7 @@
                 if (maxPos.level === fromLevel && maxPos.r === fromR) {
                     showError(errorMessages.notEnoughResources);
                 } else {
-                    showSuccess(`Максимальный уровень: <span class="result-value">${maxPos.level} R${maxPos.r}</span><br>Потратится: 💎 ${maxPos.usedCards.toLocaleString()} карт, 🪙 ${maxPos.usedCredits.toLocaleString()} монет<br>Останется: 💎 ${(cards - maxPos.usedCards).toLocaleString()} карт, 🪙 ${(credits - maxPos.usedCredits).toLocaleString()} монет`);
+                    showSuccess(`Максимальный уровень: <span class="result-value">${maxPos.level} R${maxPos.r}</span><br>Потратится: 🟨 ${maxPos.usedCards.toLocaleString()} карт, 💿 ${maxPos.usedCredits.toLocaleString()} монет<br>Останется: 🟨 ${(cards - maxPos.usedCards).toLocaleString()} карт, 💿 ${(credits - maxPos.usedCredits).toLocaleString()} монет`);
                 }
                 btnClear.style.display = 'block';
             } else if (!hasTo && hasCards && !hasCredits) {
@@ -734,7 +728,7 @@
                 if (maxPos.level === fromLevel && maxPos.r === fromR) {
                     showError(errorMessages.notEnoughResources);
                 } else {
-                    showSuccess(`На ${cards.toLocaleString()} карт можно прокачать до: <span class="result-value">${maxPos.level} R${maxPos.r}</span><br>Потратится: 💎 ${maxPos.usedCards.toLocaleString()} карт, 🪙 ${maxPos.usedCredits.toLocaleString()} монет`);
+                    showSuccess(`На ${cards.toLocaleString()} карт можно прокачать до: <span class="result-value">${maxPos.level} R${maxPos.r}</span><br>Потратится: 🟨 ${maxPos.usedCards.toLocaleString()} карт, 💿 ${maxPos.usedCredits.toLocaleString()} монет`);
                 }
                 btnClear.style.display = 'block';
             } else if (!hasTo && !hasCards && hasCredits) {
@@ -742,7 +736,7 @@
                 if (maxPos.level === fromLevel && maxPos.r === fromR) {
                     showError(errorMessages.notEnoughResources);
                 } else {
-                    showSuccess(`На ${credits.toLocaleString()} монет (со скидкой ${discount}%) можно прокачать до: <span class="result-value">${maxPos.level} R${maxPos.r}</span><br>Потратится: 💎 ${maxPos.usedCards.toLocaleString()} карт, 🪙 ${maxPos.usedCredits.toLocaleString()} монет`);
+                    showSuccess(`На ${credits.toLocaleString()} монет (со скидкой ${discount}%) можно прокачать до: <span class="result-value">${maxPos.level} R${maxPos.r}</span><br>Потратится: 🟨 ${maxPos.usedCards.toLocaleString()} карт, 💿 ${maxPos.usedCredits.toLocaleString()} монет`);
                 }
                 btnClear.style.display = 'block';
             } else {
@@ -767,7 +761,7 @@
             
             resultPanel.className = 'result-panel';
             resultText.className = 'result-text';
-            resultText.innerHTML = 'Заполните любые из параметров и нажмите "Рассчитать", чтобы узнать остальные';
+            resultText.innerHTML = 'Заполни любые из параметров и нажми «Рассчитать», чтобы узнать остальные';
             btnClear.style.display = 'none';
         }
 
