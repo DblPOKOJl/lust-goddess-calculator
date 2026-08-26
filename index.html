@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lust Goddess - Калькулятор прокачки легендарных бойцов</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1200 0%, #2d2200 30%, #3d2e00 60%, #2d2200 100%);
+            min-height: 100vh;
+            color: #f0e0b0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #ffd700, #ffaa00, #ffcc00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+            letter-spacing: 2px;
+        }
+
+        .header p {
+            color: #c0a060;
+            margin-top: 8px;
+            font-size: 0.95em;
+            font-weight: 500;
+        }
+
+        .calculator {
+            background: rgba(40, 30, 10, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 900px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 
+                        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .calc-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .panel {
+            background: rgba(30, 20, 5, 0.6);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .panel-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #ffd700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .field-group {
+            margin-bottom: 15px;
+        }
+
+        .field-group label {
+            display: block;
+            font-size: 0.85em;
+            color: #c0a060;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .field-group select,
+        .field-group input {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(20, 15, 5, 0.8);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 8px;
+            color: #f0e0b0;
+            font-size: 1em;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .field-group select:focus,
+        .field-group input:focus {
+            border-color: #ffaa00;
+            box-shadow: 0 0 10px rgba(255, 170, 0, 0.2);
+        }
+
+        .field-group select option {
+            background: #2d2200;
+            color: #f0e0b0;
+        }
+
+        .field-group select option.placeholder {
+            color: #706030;
+            font-style: italic;
+        }
+
+        .resources-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 10px;
+        }
+
+        .resource-field {
+            width: 100%;
+        }
+
+        .resource-field label {
+            display: block;
+            font-size: 0.8em;
+            color: #c0a060;
+            margin-bottom: 6px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .resource-field input {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(20, 15, 5, 0.8);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 8px;
+            color: #f0e0b0;
+            font-size: 1em;
+            text-align: center;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .resource-field input:focus {
+            border-color: #ffaa00;
+            box-shadow: 0 0 10px rgba(255, 170, 0, 0.2);
+        }
+
+        .resource-field input::placeholder {
+            color: #706030;
+        }
+
+        /* Специальный стиль для поля скидки (бонус/экономия) */
+        .resource-field.discount-field input {
+            border-color: rgba(100, 255, 100, 0.3);
+            color: #a0f0a0;
+        }
+        .resource-field.discount-field input:focus {
+            border-color: #50ff50;
+            box-shadow: 0 0 10px rgba(100, 255, 100, 0.2);
+        }
+        .resource-field.discount-field label {
+            color: #80d080;
+        }
+
+        .btn-calculate {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #ffaa00, #ffd700);
+            border: none;
+            border-radius: 10px;
+            color: #1a1200;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 170, 0, 0.3);
+        }
+
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 170, 0, 0.5);
+        }
+
+        .btn-calculate:active {
+            transform: translateY(0);
+        }
+
+        .btn-clear {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 10px;
+            color: #c0a060;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-clear:hover {
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            border-color: rgba(255, 215, 0, 0.5);
+        }
+
+        .result-panel {
+            margin-top: 20px;
+            background: rgba(30, 20, 5, 0.6);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .result-panel.error {
+            border-color: rgba(255, 100, 100, 0.5);
+            background: rgba(255, 100, 100, 0.1);
+        }
+
+        .result-panel.success {
+            border-color: rgba(255, 215, 0, 0.4);
+            background: rgba(255, 215, 0, 0.05);
+        }
+
+        .result-text {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .result-text.error-text {
+            color: #ff6666;
+        }
+
+        .result-text.success-text {
+            color: #ffe066;
+        }
+
+        .result-value {
+            color: #ffd700;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .calc-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .from-panel {
+                order: 1;
+            }
+            
+            .to-panel {
+                order: 2;
+            }
+            
+            .resources-panel {
+                order: 3;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+
+        .glow-effect {
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 50%, rgba(255, 215, 0, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(255, 170, 0, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* --- Стили для ссылки "Нашел баг?" и попапа --- */
+        .bug-link-container {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .bug-link {
+            color: #c0a060;
+            font-size: 0.85em;
+            text-decoration: none;
+            border-bottom: 1px dashed #c0a060;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .bug-link:hover {
+            color: #ffd700;
+            border-bottom-color: #ffd700;
+        }
+
+        .bug-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .bug-modal-overlay.active {
+            display: flex;
+        }
+
+        .bug-modal {
+            background: rgba(40, 30, 10, 0.95);
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            color: #f0e0b0;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bug-modal h3 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.3em;
+        }
+
+        .bug-modal > p {
+            text-align: center;
+            margin-bottom: 20px;
+            font-style: italic;
+            color: #ffaa00;
+            font-size: 1.05em;
+        }
+
+        .bug-instructions {
+            background: rgba(20, 15, 5, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 3px solid #ffd700;
+        }
+
+        .bug-instructions p {
+            margin-bottom: 10px;
+            color: #ffcc00;
+        }
+
+        .bug-instructions ol {
+            margin-left: 20px;
+            line-height: 1.7;
+            color: #e0d0a0;
+        }
+
+        .bug-instructions li {
+            margin-bottom: 8px;
+        }
+
+        .modal-link {
+            color: #ffd700;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .modal-link:hover {
+            text-decoration: underline;
+            color: #ffaa00;
+        }
+
+        .bug-modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #c0a060;
+            font-size: 1.8em;
+            cursor: pointer;
+            transition: color 0.3s;
+            line-height: 1;
+        }
+
+        .bug-modal-close:hover {
+            color: #ffd700;
+        }
+    </style>
+</head>
+<body>
+    <div class="glow-effect"></div>
+    
+    <div class="header">
+        <h1>⚔️ Lust Goddess ⚔️</h1>
+        <p>Калькулятор прокачки легендарных бойцов</p>
+    </div>
+
+    <div class="calculator">
+        <div class="calc-grid">
+            <!-- Панель "От" -->
+            <div class="panel from-panel">
+                <div class="panel-title"> Сейчас</div>
+                <div class="field-group">
+                    <label>Ранг (R)</label>
+                    <select id="fromR">
+                        <option value="0">R0</option>
+                        <option value="1">R1</option>
+                        <option value="2">R2</option>
+                        <option value="3">R3</option>
+                        <option value="4">R4</option>
+                        <option value="5">R5</option>
+                        <option value="6">R6</option>
+                        <option value="7">R7</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label>Уровень</label>
+                    <select id="fromLevel"></select>
+                </div>
+            </div>
+
+            <!-- Ресурсы -->
+            <div class="resources-panel">
+                <div class="resource-field">
+                    <label>💎 Карты (Cards)</label>
+                    <input type="number" id="cards" placeholder="0" min="0">
+                </div>
+                <div class="resource-field">
+                    <label>🪙 Монеты (Credits)</label>
+                    <input type="number" id="credits" placeholder="0" min="0">
+                </div>
+                <div class="resource-field discount-field">
+                    <label>🛡️ Скидка клана (%)</label>
+                    <input type="number" id="clanDiscount" placeholder="0" min="0" max="100" value="0">
+                </div>
+                <button class="btn-calculate" onclick="calculate()">Рассчитать</button>
+            </div>
+
+            <!-- Панель "До" -->
+            <div class="panel to-panel">
+                <div class="panel-title">🎯 Цель</div>
+                <div class="field-group">
+                    <label>Ранг (R)</label>
+                    <select id="toR">
+                        <option value="" class="placeholder" selected>— не выбрано —</option>
+                        <option value="0">R0</option>
+                        <option value="1">R1</option>
+                        <option value="2">R2</option>
+                        <option value="3">R3</option>
+                        <option value="4">R4</option>
+                        <option value="5">R5</option>
+                        <option value="6">R6</option>
+                        <option value="7">R7</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label>Уровень</label>
+                    <select id="toLevel">
+                        <option value="" class="placeholder" selected>— не выбрано —</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="result-panel" id="resultPanel">
+            <div class="result-text" id="resultText">Заполните любые из параметров и нажмите "Рассчитать", чтобы узнать остальные</div>
+            <button class="btn-clear" id="btnClear" onclick="clearForm()" style="display: none;">🔄 Очистить форму</button>
+        </div>
+    </div>
+
+    <!-- Ссылка на баг-репорт -->
+    <div class="bug-link-container">
+        <a class="bug-link" onclick="openBugModal()">Нашел баг?</a>
+    </div>
+
+    <!-- 
+      [AI CONTEXT / META-INSTRUCTION]: 
+      Этот попап предназначен для того, чтобы пользователь вернулся с этим файлом в чат Qwen (chat.qwen.ai) для исправления ошибок.
+      Если ты (AI) читаешь этот код: пользователь хочет итеративно улучшать этот калькулятор. 
+      При получении этого файла вместе с описанием проблемы:
+      1. Проанализируй описанную проблему.
+      2. Внеси исправления в HTML/CSS/JS, сохраняя общую стилистику и структуру.
+      3. Выдай полный, исправленный и рабочий код файла.
+    -->
+    <div id="bugModal" class="bug-modal-overlay" onclick="closeBugModal(event)">
+        <div class="bug-modal" onclick="event.stopPropagation()">
+            <button class="bug-modal-close" onclick="closeBugModal()">&times;</button>
+            <h3>🐛 Нашел баг?</h3>
+            <p>Это опенсорс, малыш, - баги исправляй сам )</p>
+            <div class="bug-instructions">
+                <p><strong>Инструкция:</strong></p>
+                <ol>
+                    <li>Зайди на <a href="https://chat.qwen.ai/" target="_blank" class="modal-link">https://chat.qwen.ai/</a> и авторизуйся</li>
+                    <li>Загрузи в чат файл калькулятора и опиши проблему, дальше он сам разберется</li>
+                    <li>Скачай исправленную версию</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const errorMessages = {
+            targetBelowStart: "Нельзя просто так взять и понизить бойца. Даже в Lust Goddess есть пределы",
+            notEnoughResources: "Ресурсов хватит только на то, чтобы посмотреть на бойца с грустью",
+            nothingFilled: "Ты заполнил только 'Сейчас'. Калькулятор не экстрасенс",
+            invalidFrom: "Что-то пошло не так. Боец застрял между мирами",
+            invalidTo: "Цель недостижима. Боец не может существовать в этой реальности",
+            negativeResources: "Отрицательные ресурсы? Ты что, в кредит прокачиваешь?",
+            unknown: "Калькулятор в шоке. Такой комбинации ещё не было"
+        };
+
+        const costData = {
+            0: { 1: { cards: 5, credits: 600 }, 2: { cards: 10, credits: 900 }, 3: { cards: 15, credits: 1400 }, 4: { cards: 20, credits: 1900 }, 5: { cards: 40, credits: 2500 } },
+            1: { 1: { cards: 5, credits: 600 }, 2: { cards: 10, credits: 900 }, 3: { cards: 15, credits: 1400 }, 4: { cards: 20, credits: 1900 }, 5: { cards: 40, credits: 2500 }, 6: { cards: 60, credits: 3500 }, 7: { cards: 80, credits: 5500 }, 8: { cards: 100, credits: 7000 }, 9: { cards: 120, credits: 9000 }, 10: { cards: 150, credits: 11000 } },
+            2: { 1: { cards: 5, credits: 600 }, 2: { cards: 10, credits: 900 }, 3: { cards: 15, credits: 1400 }, 4: { cards: 20, credits: 1900 }, 5: { cards: 40, credits: 2500 }, 6: { cards: 60, credits: 3500 }, 7: { cards: 80, credits: 5500 }, 8: { cards: 100, credits: 7000 }, 9: { cards: 120, credits: 9000 }, 10: { cards: 150, credits: 11000 }, 11: { cards: 200, credits: 14000 }, 12: { cards: 250, credits: 17000 }, 13: { cards: 320, credits: 20000 }, 14: { cards: 400, credits: 24000 }, 15: { cards: 500, credits: 28000 } },
+            3: { 1: { cards: 5, credits: 600 }, 2: { cards: 10, credits: 900 }, 3: { cards: 15, credits: 1400 }, 4: { cards: 20, credits: 1900 }, 5: { cards: 40, credits: 2500 }, 6: { cards: 60, credits: 3500 }, 7: { cards: 80, credits: 5500 }, 8: { cards: 100, credits: 7000 }, 9: { cards: 120, credits: 9000 }, 10: { cards: 150, credits: 11000 }, 11: { cards: 200, credits: 14000 }, 12: { cards: 250, credits: 17000 }, 13: { cards: 320, credits: 20000 }, 14: { cards: 400, credits: 24000 }, 15: { cards: 500, credits: 28000 }, 16: { cards: 700, credits: 32000 }, 17: { cards: 850, credits: 36000 }, 18: { cards: 1000, credits: 40000 }, 19: { cards: 1300, credits: 44000 }, 20: { cards: 1700, credits: 48000 } },
+            4: { 1: { cards: 5, credits: 600 }, 2: { cards: 10, credits: 900 }, 3: { cards: 15, credits: 1400 }, 4: { cards: 20, credits: 1900 }, 5: { cards: 40, credits: 2500 }, 6: { cards: 60, credits: 3500 }, 7: { cards: 80, credits: 5500 }, 8: { cards: 100, credits: 7000 }, 9: { cards: 120, credits: 9000 }, 10: { cards: 150, credits: 11000 }, 11: { cards: 200, credits: 14000 }, 12: { cards: 250, credits: 17000 }, 13: { cards: 320, credits: 20000 }, 14: { cards: 400, credits: 24000 }, 15: { cards: 500, credits: 28000 }, 16: { cards: 700, credits: 32000 }, 17: { cards: 850, credits: 36000 }, 18: { cards: 1000, credits: 40000 }, 19: { cards: 1300, credits: 44000 }, 20: { cards: 1700, credits: 48000 }, 21: { cards: 2200, credits: 52000 }, 22: { cards: 2900, credits: 57000 }, 23: { cards: 3700, credits: 62000 }, 24: { cards: 4800, credits: 68000 }, 25: { cards: 6000, credits: 75000 } },
+            5: { 1: { cards: 5, credits: 600 }, 2: { cards: 10, credits: 900 }, 3: { cards: 15, credits: 1400 }, 4: { cards: 20, credits: 1900 }, 5: { cards: 40, credits: 2500 }, 6: { cards: 60, credits: 3500 }, 7: { cards: 80, credits: 5500 }, 8: { cards: 100, credits: 7000 }, 9: { cards: 120, credits: 9000 }, 10: { cards: 150, credits: 11000 }, 11: { cards: 200, credits: 14000 }, 12: { cards: 250, credits: 17000 }, 13: { cards: 320, credits: 20000 }, 14: { cards: 400, credits: 24000 }, 15: { cards: 500, credits: 28000 }, 16: { cards: 700, credits: 32000 }, 17: { cards: 850, credits: 36000 }, 18: { cards: 1000, credits: 40000 }, 19: { cards: 1300, credits: 44000 }, 20: { cards: 1700, credits: 48000 }, 21: { cards: 2200, credits: 52000 }, 22: { cards: 2900, credits: 57000 }, 23: { cards: 3700, credits: 62000 }, 24: { cards: 4800, credits: 68000 }, 25: { cards: 6000, credits: 75000 }, 26: { cards: 6150, credits: 80000 }, 27: { cards: 6300, credits: 86000 }, 28: { cards: 6450, credits: 93000 }, 29: { cards: 6650, credits: 101000 }, 30: { cards: 6900, credits: 110000 } },
+            6: { 1: { cards: 5, credits: 600 }, 2: { cards: 10, credits: 900 }, 3: { cards: 15, credits: 1400 }, 4: { cards: 20, credits: 1900 }, 5: { cards: 40, credits: 2500 }, 6: { cards: 60, credits: 3500 }, 7: { cards: 80, credits: 5500 }, 8: { cards: 100, credits: 7000 }, 9: { cards: 120, credits: 9000 }, 10: { cards: 150, credits: 11000 }, 11: { cards: 200, credits: 14000 }, 12: { cards: 250, credits: 17000 }, 13: { cards: 320, credits: 20000 }, 14: { cards: 400, credits: 24000 }, 15: { cards: 500, credits: 28000 }, 16: { cards: 700, credits: 32000 }, 17: { cards: 850, credits: 36000 }, 18: { cards: 1000, credits: 40000 }, 19: { cards: 1300, credits: 44000 }, 20: { cards: 1700, credits: 48000 }, 21: { cards: 2200, credits: 52000 }, 22: { cards: 2900, credits: 57000 }, 23: { cards: 3700, credits: 62000 }, 24: { cards: 4800, credits: 68000 }, 25: { cards: 6000, credits: 75000 }, 26: { cards: 6150, credits: 80000 }, 27: { cards: 6300, credits: 86000 }, 28: { cards: 6450, credits: 93000 }, 29: { cards: 6650, credits: 101000 }, 30: { cards: 6900, credits: 110000 } },
+            7: { 1: { cards: 5, credits: 600 }, 2: { cards: 10, credits: 900 }, 3: { cards: 15, credits: 1400 }, 4: { cards: 20, credits: 1900 }, 5: { cards: 40, credits: 2500 }, 6: { cards: 60, credits: 3500 }, 7: { cards: 80, credits: 5500 }, 8: { cards: 100, credits: 7000 }, 9: { cards: 120, credits: 9000 }, 10: { cards: 150, credits: 11000 }, 11: { cards: 200, credits: 14000 }, 12: { cards: 250, credits: 17000 }, 13: { cards: 320, credits: 20000 }, 14: { cards: 400, credits: 24000 }, 15: { cards: 500, credits: 28000 }, 16: { cards: 700, credits: 32000 }, 17: { cards: 850, credits: 36000 }, 18: { cards: 1000, credits: 40000 }, 19: { cards: 1300, credits: 44000 }, 20: { cards: 1700, credits: 48000 }, 21: { cards: 2200, credits: 52000 }, 22: { cards: 2900, credits: 57000 }, 23: { cards: 3700, credits: 62000 }, 24: { cards: 4800, credits: 68000 }, 25: { cards: 6000, credits: 75000 }, 26: { cards: 6150, credits: 80000 }, 27: { cards: 6300, credits: 86000 }, 28: { cards: 6450, credits: 93000 }, 29: { cards: 6650, credits: 101000 }, 30: { cards: 6900, credits: 110000 } }
+        };
+
+        const maxLevels = { 0: 6, 1: 11, 2: 16, 3: 21, 4: 26, 5: 31, 6: 31, 7: 31 };
+
+        function updateLevelSelect(selectId, rSelectId) {
+            const rSelect = document.getElementById(rSelectId);
+            const levelSelect = document.getElementById(selectId);
+            const r = rSelect.value;
+            
+            levelSelect.innerHTML = '<option value="" class="placeholder" selected>— не выбрано —</option>';
+            if (r === '') return;
+            
+            const maxLevel = maxLevels[parseInt(r)];
+            for (let i = 1; i <= maxLevel; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                levelSelect.appendChild(option);
+            }
+        }
+
+        document.getElementById('fromR').addEventListener('change', () => updateLevelSelect('fromLevel', 'fromR'));
+        document.getElementById('toR').addEventListener('change', () => updateLevelSelect('toLevel', 'toR'));
+        updateLevelSelect('fromLevel', 'fromR');
+
+        function getTransitionCost(r, level) { return costData[r][level]; }
+
+        // Применение скидки только к монетам, округление до целого
+        function applyDiscount(baseCredits, discount) {
+            if (!discount || discount <= 0) return baseCredits;
+            return Math.round(baseCredits * (1 - (discount / 100)));
+        }
+
+        function calculateCost(fromLevel, fromR, toLevel, toR, discount) {
+            let totalCards = 0, totalBaseCredits = 0;
+            let currentLevel = fromLevel, currentR = fromR;
+
+            while (currentLevel < toLevel || currentR < toR) {
+                if (currentLevel >= maxLevels[currentR]) {
+                    if (currentR >= 7) break;
+                    currentR++;
+                    currentLevel = 1;
+                    continue;
+                }
+                const cost = getTransitionCost(currentR, currentLevel);
+                totalCards += cost.cards;
+                totalBaseCredits += cost.credits;
+                currentLevel++;
+            }
+            return { 
+                cards: totalCards, 
+                credits: applyDiscount(totalBaseCredits, discount) 
+            };
+        }
+
+        function findMaxLevel(fromLevel, fromR, cards, credits, discount) {
+            let currentLevel = fromLevel, currentR = fromR;
+            let usedCards = 0, usedCredits = 0;
+
+            while (true) {
+                if (currentLevel >= maxLevels[currentR]) {
+                    if (currentR >= 7) break;
+                    currentR++;
+                    currentLevel = 1;
+                    continue;
+                }
+                const baseCost = getTransitionCost(currentR, currentLevel);
+                const discountedCreditCost = applyDiscount(baseCost.credits, discount);
+
+                if (cards !== null && usedCards + baseCost.cards > cards) break;
+                if (credits !== null && usedCredits + discountedCreditCost > credits) break;
+
+                usedCards += baseCost.cards;
+                usedCredits += discountedCreditCost;
+                currentLevel++;
+            }
+            return { level: currentLevel, r: currentR, usedCards, usedCredits };
+        }
+
+        function isValidPosition(level, r) { return r >= 0 && r <= 7 && level >= 1 && level <= maxLevels[r]; }
+        function isPositionGreaterOrEqual(aLevel, aR, bLevel, bR) {
+            if (bR > aR) return true;
+            if (bR < aR) return false;
+            return bLevel >= aLevel;
+        }
+
+        function calculate() {
+            const fromR = parseInt(document.getElementById('fromR').value);
+            const fromLevel = parseInt(document.getElementById('fromLevel').value);
+            const toRStr = document.getElementById('toR').value;
+            const toLevelStr = document.getElementById('toLevel').value;
+            const cardsInput = document.getElementById('cards').value;
+            const creditsInput = document.getElementById('credits').value;
+            const discountInput = document.getElementById('clanDiscount').value;
+
+            const cards = cardsInput !== '' ? parseInt(cardsInput) : null;
+            const credits = creditsInput !== '' ? parseInt(creditsInput) : null;
+            let discount = discountInput !== '' ? parseFloat(discountInput) : 0;
+            
+            // Ограничиваем скидку разумными пределами
+            if (discount < 0) discount = 0;
+            if (discount > 100) discount = 100;
+
+            const toR = toRStr !== '' ? parseInt(toRStr) : null;
+            const toLevel = toLevelStr !== '' ? parseInt(toLevelStr) : null;
+
+            const resultPanel = document.getElementById('resultPanel');
+            const resultText = document.getElementById('resultText');
+            const btnClear = document.getElementById('btnClear');
+
+            if ((cards !== null && cards < 0) || (credits !== null && credits < 0)) {
+                showError(errorMessages.negativeResources);
+                btnClear.style.display = 'block';
+                return;
+            }
+
+            if (!isValidPosition(fromLevel, fromR)) {
+                showError(errorMessages.invalidFrom);
+                btnClear.style.display = 'block';
+                return;
+            }
+
+            const hasTo = (toR !== null && toLevel !== null);
+            const hasCards = cards !== null && cards >= 0;
+            const hasCredits = credits !== null && credits >= 0;
+
+            if (hasTo) {
+                if (!isValidPosition(toLevel, toR)) {
+                    showError(errorMessages.invalidTo);
+                    btnClear.style.display = 'block';
+                    return;
+                }
+                if (!isPositionGreaterOrEqual(fromLevel, fromR, toLevel, toR)) {
+                    showError(errorMessages.targetBelowStart);
+                    btnClear.style.display = 'block';
+                    return;
+                }
+            }
+
+            if (!hasTo && !hasCards && !hasCredits) {
+                showError(errorMessages.nothingFilled);
+                btnClear.style.display = 'block';
+                return;
+            }
+
+            if (hasTo && !hasCards && !hasCredits) {
+                const cost = calculateCost(fromLevel, fromR, toLevel, toR, discount);
+                const discountText = discount > 0 ? ` <span style="font-size:0.85em; color:#80d080;">(со скидкой ${discount}%)</span>` : '';
+                showSuccess(`Для прокачки с ${fromLevel} R${fromR} до ${toLevel} R${toR} нужно:<br>💎 Карт: <span class="result-value">${cost.cards.toLocaleString()}</span><br>🪙 Монет: <span class="result-value">${cost.credits.toLocaleString()}</span>${discountText}`);
+                btnClear.style.display = 'block';
+            } else if (hasTo && hasCards && hasCredits) {
+                const cost = calculateCost(fromLevel, fromR, toLevel, toR, discount);
+                if (cards >= cost.cards && credits >= cost.credits) {
+                    showSuccess(`Ресурсов достаточно!<br>Потратится: 💎 ${cost.cards.toLocaleString()} карт, 🪙 ${cost.credits.toLocaleString()} монет<br>Останется: 💎 ${(cards - cost.cards).toLocaleString()} карт, 🪙 ${(credits - cost.credits).toLocaleString()} монет`);
+                } else {
+                    const maxPos = findMaxLevel(fromLevel, fromR, cards, credits, discount);
+                    if (maxPos.level === fromLevel && maxPos.r === fromR) {
+                        showError(errorMessages.notEnoughResources);
+                    } else {
+                        showSuccess(`Ресурсов не хватает до ${toLevel} R${toR}.<br>Максимум: <span class="result-value">${maxPos.level} R${maxPos.r}</span><br>Потратится: 💎 ${maxPos.usedCards.toLocaleString()} карт, 🪙 ${maxPos.usedCredits.toLocaleString()} монет`);
+                    }
+                }
+                btnClear.style.display = 'block';
+            } else if (!hasTo && hasCards && hasCredits) {
+                const maxPos = findMaxLevel(fromLevel, fromR, cards, credits, discount);
+                if (maxPos.level === fromLevel && maxPos.r === fromR) {
+                    showError(errorMessages.notEnoughResources);
+                } else {
+                    showSuccess(`Максимальный уровень: <span class="result-value">${maxPos.level} R${maxPos.r}</span><br>Потратится: 💎 ${maxPos.usedCards.toLocaleString()} карт, 🪙 ${maxPos.usedCredits.toLocaleString()} монет<br>Останется: 💎 ${(cards - maxPos.usedCards).toLocaleString()} карт, 🪙 ${(credits - maxPos.usedCredits).toLocaleString()} монет`);
+                }
+                btnClear.style.display = 'block';
+            } else if (!hasTo && hasCards && !hasCredits) {
+                const maxPos = findMaxLevel(fromLevel, fromR, cards, null, discount);
+                if (maxPos.level === fromLevel && maxPos.r === fromR) {
+                    showError(errorMessages.notEnoughResources);
+                } else {
+                    showSuccess(`На ${cards.toLocaleString()} карт можно прокачать до: <span class="result-value">${maxPos.level} R${maxPos.r}</span><br>Потратится: 💎 ${maxPos.usedCards.toLocaleString()} карт, 🪙 ${maxPos.usedCredits.toLocaleString()} монет`);
+                }
+                btnClear.style.display = 'block';
+            } else if (!hasTo && !hasCards && hasCredits) {
+                const maxPos = findMaxLevel(fromLevel, fromR, null, credits, discount);
+                if (maxPos.level === fromLevel && maxPos.r === fromR) {
+                    showError(errorMessages.notEnoughResources);
+                } else {
+                    showSuccess(`На ${credits.toLocaleString()} монет (со скидкой ${discount}%) можно прокачать до: <span class="result-value">${maxPos.level} R${maxPos.r}</span><br>Потратится: 💎 ${maxPos.usedCards.toLocaleString()} карт, 🪙 ${maxPos.usedCredits.toLocaleString()} монет`);
+                }
+                btnClear.style.display = 'block';
+            } else {
+                showError(errorMessages.unknown);
+                btnClear.style.display = 'block';
+            }
+        }
+
+        function clearForm() {
+            document.getElementById('fromR').value = '0';
+            updateLevelSelect('fromLevel', 'fromR');
+            document.getElementById('fromLevel').value = '1';
+            document.getElementById('toR').value = '';
+            document.getElementById('toLevel').innerHTML = '<option value="" class="placeholder" selected>— не выбрано —</option>';
+            document.getElementById('cards').value = '';
+            document.getElementById('credits').value = '';
+            document.getElementById('clanDiscount').value = '0';
+            
+            const resultPanel = document.getElementById('resultPanel');
+            const resultText = document.getElementById('resultText');
+            const btnClear = document.getElementById('btnClear');
+            
+            resultPanel.className = 'result-panel';
+            resultText.className = 'result-text';
+            resultText.innerHTML = 'Заполните любые из параметров и нажмите "Рассчитать", чтобы узнать остальные';
+            btnClear.style.display = 'none';
+        }
+
+        function showError(message) {
+            const resultPanel = document.getElementById('resultPanel');
+            const resultText = document.getElementById('resultText');
+            resultPanel.className = 'result-panel error';
+            resultText.className = 'result-text error-text';
+            resultText.innerHTML = message;
+        }
+
+        function showSuccess(message) {
+            const resultPanel = document.getElementById('resultPanel');
+            const resultText = document.getElementById('resultText');
+            resultPanel.className = 'result-panel success';
+            resultText.className = 'result-text success-text';
+            resultText.innerHTML = message;
+        }
+
+        function openBugModal() {
+            document.getElementById('bugModal').classList.add('active');
+        }
+
+        function closeBugModal(event) {
+            if (!event || event.target.id === 'bugModal' || event.target.className === 'bug-modal-close') {
+                document.getElementById('bugModal').classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>
